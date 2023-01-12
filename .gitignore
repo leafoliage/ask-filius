@@ -1,2 +1,4 @@
 venv
 .env
+text.csv
+tfidf.csv
