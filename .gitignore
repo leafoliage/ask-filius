@@ -1,4 +1,4 @@
 venv
 .env
-text.csv
-tfidf.csv
+*.csv
+!commands.csv
