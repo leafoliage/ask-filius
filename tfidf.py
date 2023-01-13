@@ -19,3 +19,4 @@ tfidf_vectors = tfidf_vectorizer.fit_transform(text_df['document'])
 
 tfidf_df = pd.DataFrame(data=tfidf_vectors.toarray(), index=text_df['command'], columns=tfidf_vectorizer.get_feature_names_out())
 tfidf_df.to_csv('tfidf.csv')
+print(tfidf_df.info())
