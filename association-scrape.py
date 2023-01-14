@@ -1,21 +1,17 @@
 import requests
-from dotenv import dotenv_values
-import json
 from bs4 import BeautifulSoup
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
 
-config = dotenv_values(".env")
 commands_df = pd.read_csv('commands.csv')
 
-def extract_links(response):
-    j = response.json()
-    text = json.dumps(j)
-    return text.replace("{\"items\": [{\"link\": \"", "").replace("\"}]}", "").split("\"}, {\"link\": \"")
-
 def extract_text(link):
-    bs = BeautifulSoup(requests.get(link).text, "html.parser")
     doc = ""
+    try:
+        r = requests.get(link)
+    except requests.exceptions.ConnectionError:
+        return doc
+    bs = BeautifulSoup(r.text, "html.parser")
     for pre in bs.find_all('pre'):
         doc += pre.text
     for code in bs.find_all('code'):
@@ -26,22 +22,21 @@ def extract_text(link):
         doc += p.text
     return doc
 
-def search(site):
-    q = "linux"
-    fields = "items/link"
-    url = f"https://www.googleapis.com/customsearch/v1?cx={config['SE_ID']}&key={config['API_KEY']}&q={q}&fields={fields}&siteSearch={site}"
+
+targets = []
+for i in range(1,11):
+    url = "https://stackoverflow.com/questions/tagged/linux?tab=newest&page=1&pagesize=10"
     r = requests.get(url)
-    links = extract_links(r)
-
-    corpus = []
-    for link in links:
-        corpus.append(extract_text(link))
-
-    return corpus
+    bs = BeautifulSoup(r.text, "html.parser")
+    targets.extend(bs.find_all(attrs={"class":"s-link"}))
 
 corpus = []
-corpus.extend(search("stackoverflow.com"))
-    
+for t in targets:
+    if not t.attrs['href'][0] == '/':
+        continue
+    url = f"https://stackoverflow.com{t.attrs['href']}"
+    corpus.append(extract_text(url))
+
 vectorizer = CountVectorizer(binary=True)
 vecs = vectorizer.fit_transform(corpus)
 df = pd.DataFrame(data=vecs.toarray(), columns=vectorizer.get_feature_names_out())
