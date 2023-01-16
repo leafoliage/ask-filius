@@ -7,4 +7,4 @@ association_df = association_df.astype(bool)
 frequent_sets = apriori(association_df, use_colnames=True)
 rules = association_rules(frequent_sets, metric="lift")
 
-rules.to_csv('rules.csv')
+rules.to_csv('rules.csv', index=False)
