@@ -12,28 +12,11 @@ The current challenge of this project is that it lacks accuracy. This is probabl
 
 ## Installation
 
-### Install from archive
-
 1. Download archive from the [Release page](https://github.com/leafoliage/ask-filius/releases)
 2. Extract the tool
 
 ```
 tar -xzf ask_filius_0.1.0_linux.tar.gz -C /usr/local/bin
-```
-
-### Build from source
-
-1. Download source code from the [Release page](https://github.com/leafoliage/ask-filius/releases)
-2. If you haven't installed pyinstaller, install it
-
-```
-pip install pyinstaller
-```
-
-3. Build with pyinstaller
-
-```
-pyinstaller main.py --name ask --add-data tfidf.csv:./ --add-data rules.csv:./ --add-data commands.csv:./
 ```
 
 ## Usage
